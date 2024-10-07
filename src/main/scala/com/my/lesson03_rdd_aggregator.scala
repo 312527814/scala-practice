@@ -12,6 +12,39 @@ object lesson03_rdd_aggregator {
     val sc = new SparkContext(conf)
     sc.setLogLevel("ERROR")
 
+    val value1 :RDD[String]= sc.parallelize(List(
+      "zhangsan",
+      "zhangsan",
+      "zhangsan",
+      "lisi",
+      "lisi",
+      "lisi",
+      "wangwu",
+      "wangwu",
+      "wangwu"
+    ), 3)
+    val value2 = value1.map((_, 1))
+//   val data11= value2.combineByKey(
+//      _,
+//      (oldValue: Int, newValue: Int) => oldValue + newValue,
+//      (v1: Int, v2: Int) => v1 + v2
+//    )
+   val data1= value2.combineByKey(
+     (value: Int) => value,
+     (oldValue: Int, newValue: Int) => {
+
+       println("oldValue:" + oldValue + " newValue:" + newValue)
+
+       oldValue + newValue
+     },
+  (v1: Int, v2: Int) => {
+    println("v1:" + v1 + " v2:" + v2)
+    v1 + v2
+  }
+   )
+    data1.foreach(f=>{
+      println("key:"+f._1+" value:"+f._2)
+    })
     val data: RDD[(String, Int)] = sc.parallelize(List(
       ("zhangsan", 234),
       ("zhangsan", 5667),
@@ -24,9 +57,13 @@ object lesson03_rdd_aggregator {
     ),3)
 
     //key  value->一组
-
     val group: RDD[(String, Iterable[Int])] = data.groupByKey()
-    group.foreach(println)
+
+    val keys = group.keys
+    val l = keys.count()
+    group.foreach(f=>{
+        println("key:"+f._1+" value:"+f._2)
+      })
 
     /*group.foreach(f=>{
       val value:Iterable[Int] = f._2
@@ -37,7 +74,7 @@ object lesson03_rdd_aggregator {
     println("--------------------")
     //  行列转换
 
-    val res01: RDD[(String, Int)] = group.flatMap(e => e._2.map(x => (e._1, x)).iterator)
+    val res01 = group.flatMap(e => e._2.map(x => (e._1, x)).iterator)
     res01.foreach(println)
 //    res01.foreach(f=>{
 //      val value:Int = f._2
@@ -69,7 +106,7 @@ object lesson03_rdd_aggregator {
 
     val sum: RDD[(String, Int)] = data.reduceByKey(_+_)
     val max: RDD[(String, Int)] = data.reduceByKey(  (ov,nv)=> if(ov>nv)  ov else nv     )
-    val min: RDD[(String, Int)] = data.reduceByKey(  (ov,nv)=> if(ov<nv)  ov else nv     )
+    val min: RDD[(String, Int)] = data.sortByKey(true).reduceByKey(  (ov,nv)=> if(ov<nv)  ov else nv     )
     val count: RDD[(String, Int)] = data.mapValues(e=>1).reduceByKey(_+_)
     val tmp: RDD[(String, (Int, Int))] = sum.join(count)
     val avg: RDD[(String, Int)] = tmp.mapValues(e=> e._1/e._2)
