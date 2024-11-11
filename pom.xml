@@ -18,6 +18,36 @@
         <artifactId>spark-streaming_2.11</artifactId>
         <version>2.3.4</version>
     </dependency>
+
+
+    <!-- Flink批和流开发依赖包 -->
+    <dependency>
+        <groupId>org.apache.flink</groupId>
+        <artifactId>flink-scala_2.11</artifactId>
+        <version>1.9.2</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.flink</groupId>
+        <artifactId>flink-streaming-scala_2.11</artifactId>
+        <version>1.9.2</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.flink</groupId>
+        <artifactId>flink-clients_2.11</artifactId>
+        <version>1.9.2</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.apache.flink</groupId>
+        <artifactId>flink-runtime-web_2.11</artifactId>
+        <version>1.9.2</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.apache.flink</groupId>
+        <artifactId>flink-cep-scala_2.11</artifactId>
+        <version>1.9.2</version>
+    </dependency>
 </dependencies>
-    
+
 </project>

@@ -25,7 +25,7 @@ object lesson02_receiver02_custorm {
     val conf: SparkConf = new SparkConf().setMaster("local[10]").setAppName("receiver")
     val ssc = new StreamingContext(conf, Seconds(2))
     ssc.sparkContext.setLogLevel("ERROR")
-    val dstream: ReceiverInputDStream[String] = ssc.receiverStream(new CustormReceiver("localhost", 8889))
+    val dstream: ReceiverInputDStream[String] = ssc.receiverStream(new CustormReceiver("192.168.16.129", 8081))
     val dsWind = dstream.window(Seconds(6), Seconds(4))
     val dsWindMap = dsWind.transform(rdd => {
       val value: RDD[(String, Int)] = rdd.map(_.split(" ")).map(m => (m(0), 1)).reduceByKey((nv, ov) => {
